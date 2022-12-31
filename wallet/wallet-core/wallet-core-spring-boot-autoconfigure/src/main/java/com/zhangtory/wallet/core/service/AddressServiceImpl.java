@@ -8,7 +8,11 @@ import com.zhangtory.wallet.core.model.entity.Address;
 import com.zhangtory.wallet.core.model.request.AddressQueryRequest;
 import com.zhangtory.wallet.core.model.request.CreateAddressRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.bitcoinj.crypto.*;
+import org.bitcoinj.crypto.ChildNumber;
+import org.bitcoinj.crypto.DeterministicHierarchy;
+import org.bitcoinj.crypto.DeterministicKey;
+import org.bitcoinj.crypto.HDKeyDerivation;
+import org.bitcoinj.crypto.HDPath;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,7 +48,8 @@ public class AddressServiceImpl implements AddressService {
         DeterministicHierarchy masterDH = new DeterministicHierarchy(masterKey);
         String path = signer.getParentPath();
         List<ChildNumber> parentPath = HDPath.parsePath(path);
-        DeterministicKey deterministicKey = masterDH.get(parentPath, false, true);
+        DeterministicKey deterministicKey = masterDH.deriveChild(parentPath, false, true,
+                new ChildNumber(0));
         Address address = signer.createAddress(deterministicKey.getPrivKeyBytes());
         address.setWalletId(request.getWalletId());
         address.setPath(path);
