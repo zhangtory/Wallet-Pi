@@ -79,12 +79,18 @@ public class EthSigner implements Signer {
 
         String path = "m/44H/60H/0H/0";
         List<ChildNumber> parentPath = HDPath.parsePath(path);
-        ChildNumber childNumber = new ChildNumber(0);
+        ChildNumber childNumber = new ChildNumber(2);
         DeterministicKey deterministicKey = masterDH.deriveChild(parentPath, false, true, childNumber);
 
         ECKeyPair ecKeyPair = ECKeyPair.create(deterministicKey.getPrivKeyBytes());
         String address = Keys.getAddress(ecKeyPair);
         System.out.println(address);
+        /**
+         * btc：bc1qj4gr7x9pukfdteaaxlrc7yfsn3v9c2x04p42nj
+         * eth：0x873676Fb9B3fd3B97396dbC97E2738dd81AE45CC
+         * 0x6D1Fd06ED1f636aE159843F67D87b7bF2aE53032
+         * 0x4D8749F3336bEe054FEA23b966599d87206E8b38
+         */
     }
 
     /**
