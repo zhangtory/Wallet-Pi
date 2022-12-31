@@ -1,8 +1,8 @@
 package com.zhangtory.wallet.core.service;
 
 import com.zhangtory.wallet.core.interfaces.WalletService;
-import com.zhangtory.wallet.core.mapper.MnemonicMapper;
-import com.zhangtory.wallet.core.model.entity.Mnemonic;
+import com.zhangtory.wallet.core.mapper.WalletMapper;
+import com.zhangtory.wallet.core.model.entity.Wallet;
 import com.zhangtory.wallet.core.model.request.WalletCheckRequest;
 import com.zhangtory.wallet.core.model.response.WalletInitResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,7 @@ import java.util.List;
 public class WalletServiceImpl implements WalletService {
 
     @Autowired
-    private MnemonicMapper mnemonicMapper;
+    private WalletMapper walletMapper;
 
     /**
      * 通过安全随机数生成满足BIP39协议的助记词
@@ -41,8 +41,8 @@ public class WalletServiceImpl implements WalletService {
             byte[] privateKeyBytes = ecKey.getPrivKeyBytes();
             MnemonicCode mnemonicCode = new MnemonicCode();
             List<String> mnemonics = mnemonicCode.toMnemonic(privateKeyBytes);
-            Mnemonic insert = Mnemonic.builder().mnemonics(String.join(",", mnemonics)).build();
-            mnemonicMapper.insert(insert);
+            Wallet insert = Wallet.builder().mnemonics(String.join(",", mnemonics)).build();
+            walletMapper.insert(insert);
             wallet.setMnemonics(mnemonics);
             wallet.setId(insert.getId());
             wallet.setCreateTime(insert.getCreateTime());
@@ -58,7 +58,7 @@ public class WalletServiceImpl implements WalletService {
      */
     @Override
     public boolean checkMnemonics(WalletCheckRequest request) {
-        Mnemonic mnemonics = mnemonicMapper.selectById(request.getWalletId());
+        Wallet mnemonics = walletMapper.selectById(request.getWalletId());
         String[] mnemonicArray = mnemonics.getMnemonics().split(",");
         return request.getMnemonicPairList().stream()
                 .map(pair -> mnemonicArray[pair.getIndex()].equals(pair.getWord()))
@@ -74,11 +74,11 @@ public class WalletServiceImpl implements WalletService {
      */
     @Override
     public byte[] getSeed(Integer walletId, String passphrase) {
-        Mnemonic mnemonic = mnemonicMapper.selectById(walletId);
-        if (mnemonic == null) {
+        Wallet wallet = walletMapper.selectById(walletId);
+        if (wallet == null) {
             throw new RuntimeException("no such mnemonic");
         }
-        return MnemonicCode.toSeed(Arrays.asList(mnemonic.getMnemonics().split(",")), passphrase);
+        return MnemonicCode.toSeed(Arrays.asList(wallet.getMnemonics().split(",")), passphrase);
     }
 
     /**
@@ -91,7 +91,7 @@ public class WalletServiceImpl implements WalletService {
         try {
             MnemonicCode mnemonicCode = new MnemonicCode();
             mnemonicCode.check(mnemonics);
-            mnemonicMapper.insert(Mnemonic.builder().mnemonics(String.join(",", mnemonics)).build());
+            walletMapper.insert(Wallet.builder().mnemonics(String.join(",", mnemonics)).build());
             return true;
         } catch (IOException | MnemonicException e) {
             log.error("check mnemonics error.", e);

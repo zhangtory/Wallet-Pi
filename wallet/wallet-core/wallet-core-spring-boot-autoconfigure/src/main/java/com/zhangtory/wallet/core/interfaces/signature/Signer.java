@@ -15,7 +15,7 @@ public interface Signer {
      * 创建一个新的账户
      * @return address
      */
-    Address createAccount(byte[] seed);
+    Address createAddress(byte[] seed);
 
     /**
      * 交易签名

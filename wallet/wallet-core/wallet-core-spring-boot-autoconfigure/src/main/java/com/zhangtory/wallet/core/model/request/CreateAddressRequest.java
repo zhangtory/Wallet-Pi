@@ -12,8 +12,6 @@ public class CreateAddressRequest {
 
     private Integer walletId;
 
-    private String path;
-
     private String passphrase;
 
 }

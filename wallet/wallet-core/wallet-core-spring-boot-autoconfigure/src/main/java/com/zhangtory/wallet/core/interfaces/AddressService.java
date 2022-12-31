@@ -11,7 +11,7 @@ import java.util.List;
  * @date 2022/10/6 23:48
  * @description:
  */
-public interface AccountService {
+public interface AddressService {
 
     /**
      * 创建地址

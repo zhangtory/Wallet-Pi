@@ -16,6 +16,10 @@ public class Address {
 
     private Integer id;
 
+    private Integer walletId;
+
+    private String path;
+
     private String address;
 
     private String publicKey;

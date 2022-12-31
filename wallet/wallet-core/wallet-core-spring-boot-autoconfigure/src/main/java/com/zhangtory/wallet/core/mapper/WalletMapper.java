@@ -1,7 +1,7 @@
 package com.zhangtory.wallet.core.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.zhangtory.wallet.core.model.entity.Mnemonic;
+import com.zhangtory.wallet.core.model.entity.Wallet;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -10,5 +10,5 @@ import org.apache.ibatis.annotations.Mapper;
  * @description:
  */
 @Mapper
-public interface MnemonicMapper extends BaseMapper<Mnemonic> {
+public interface WalletMapper extends BaseMapper<Wallet> {
 }

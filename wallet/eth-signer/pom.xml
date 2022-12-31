@@ -13,10 +13,6 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>eth-signer</name>
 
-    <properties>
-        <java.version>1.8</java.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.zhangtory</groupId>

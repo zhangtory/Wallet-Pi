@@ -1,8 +1,9 @@
 package com.zhangtory.wallet.core.service;
 
-import com.zhangtory.wallet.core.interfaces.AccountService;
+import com.zhangtory.wallet.core.interfaces.AddressService;
 import com.zhangtory.wallet.core.interfaces.WalletService;
 import com.zhangtory.wallet.core.interfaces.signature.Signer;
+import com.zhangtory.wallet.core.mapper.AddressMapper;
 import com.zhangtory.wallet.core.model.entity.Address;
 import com.zhangtory.wallet.core.model.request.AddressQueryRequest;
 import com.zhangtory.wallet.core.model.request.CreateAddressRequest;
@@ -20,13 +21,16 @@ import java.util.List;
  */
 @Service
 @Slf4j
-public class AccountServiceImpl implements AccountService {
+public class AddressServiceImpl implements AddressService {
 
     @Autowired
     private WalletService walletService;
 
     @Autowired
     private Signer signer;
+
+    @Autowired
+    private AddressMapper addressMapper;
 
     /**
      * 获取地址
@@ -38,9 +42,14 @@ public class AccountServiceImpl implements AccountService {
         byte[] seed = walletService.getSeed(request.getWalletId(), request.getPassphrase());
         DeterministicKey masterKey = HDKeyDerivation.createMasterPrivateKey(seed);
         DeterministicHierarchy masterDH = new DeterministicHierarchy(masterKey);
-        List<ChildNumber> parentPath = HDPath.parsePath(signer.getParentPath());
+        String path = signer.getParentPath();
+        List<ChildNumber> parentPath = HDPath.parsePath(path);
         DeterministicKey deterministicKey = masterDH.get(parentPath, false, true);
-        return signer.createAccount(deterministicKey.getPrivKeyBytes());
+        Address address = signer.createAddress(deterministicKey.getPrivKeyBytes());
+        address.setWalletId(request.getWalletId());
+        address.setPath(path);
+        addressMapper.insert(address);
+        return address;
     }
 
     /**
@@ -53,4 +62,5 @@ public class AccountServiceImpl implements AccountService {
     public List<Address> queryAddress(AddressQueryRequest request) {
         return null;
     }
+
 }

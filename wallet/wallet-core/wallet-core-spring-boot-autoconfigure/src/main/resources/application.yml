@@ -11,7 +11,7 @@ spring:
   h2:
     console:
       settings:
-        web-allow-others: true
+        web-allow-others: false
         trace: true
       enabled: true
   sql:

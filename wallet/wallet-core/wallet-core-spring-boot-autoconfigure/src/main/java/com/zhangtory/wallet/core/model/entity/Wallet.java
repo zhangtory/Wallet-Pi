@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @Builder
-public class Mnemonic {
+public class Wallet {
 
     private Integer id;
 

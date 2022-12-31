@@ -7,6 +7,8 @@ import com.zhangtory.wallet.core.model.vo.signature.SignedData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.web3j.crypto.ECKeyPair;
+import org.web3j.crypto.Keys;
+import org.web3j.utils.Numeric;
 
 /**
  * @author zhangtory
@@ -26,11 +28,11 @@ public class EthSigner implements Signer {
      * @return address
      */
     @Override
-    public Address createAccount(byte[] seed) {
+    public Address createAddress(byte[] seed) {
         ECKeyPair ecKeyPair = ECKeyPair.create(seed);
-
-
-        return null;
+        String publicKey = ecKeyPair.getPublicKey().toString(16);
+        String address = Numeric.prependHexPrefix(Keys.getAddress(ecKeyPair));
+        return Address.builder().publicKey(publicKey).address(address).build();
     }
 
     /**
